@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<resultMap id="resultMapBoardVo" type="com.javaex.vo.BoardVo" >
+        <result column="no" property="no" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="hit" property="hit" />
+        <result column="reg_date" property="regDate" />
+        <result column="user_no" property="userNo" />
+        <result column="name" property="name" />  <!-- 추가된 부분 -->
+    </resultMap>
+	
+	<!-- 게시판 리스트 -->
+<!-- 	<select id="selectList" resultMap="resultMapBoardVo">
+		<![CDATA[
+		select 	b.no
+				,b.title
+        		,b.content
+        		,b.hit
+        		,b.reg_date
+        		,u.name
+        		,b.user_no
+		from board b
+		join users u on b.user_no = u.no
+		]]>
+	</select> -->
+	
+	<select id="selectList" parameterType="map" resultType="com.javaex.vo.BoardVo">
+		<![CDATA[
+		SELECT  b.no,
+       			b.title,
+       			b.content,
+       			u.name,
+       			b.hit,
+       			date_format(b.reg_date,'%Y-%m-%d %H:%i:%s') regDate, 
+       			u.no userNo
+		FROM board b, users u
+		WHERE b.user_no = u.no
+		]]>
+		<if test="keyword != null">
+		<![CDATA[
+			AND title LIKE CONCAT('%', #{keyword}, '%')
+		]]>
+		</if>	
+		<![CDATA[	 
+		order by b.no asc
+		limit #{startRowNo}, #{listCnt}
+		]]>
+			
+	</select>
+	
+	<!-- 전체글갯수 -->
+	<select id="selectTotalCnt" resultType="int">
+		<![CDATA[
+			select count(*)
+			from board
+		]]>
+	</select>
+	<!-- 전체글갯수 + 검색 -->
+	<select id="selectTotalCntKeyword" parameterType="string" resultType="int">
+		<![CDATA[
+			select count(*)
+			from board
+		]]>
+		<if test="keyword != null">
+		<![CDATA[	
+			WHERE title LIKE CONCAT('%', #{keyword}, '%')
+		]]>
+		</if>
+		
+	</select>
+	
+	<!-- 게시글 읽기 -->
+	<select id="selectOne" parameterType="int" resultType="com.javaex.vo.BoardVo">
+		<![CDATA[
+		select 	b.no
+				,b.title
+        		,b.content
+        		,b.hit
+        		,b.reg_date as regDate
+        		,u.name
+        		,b.user_no as userNo
+		from board b
+		join users u on b.user_no = u.no
+		where b.no = #{no}
+		]]>
+	</select>
+	
+	<select id="getBoardByNo" parameterType="int" resultType="com.javaex.vo.BoardVo">
+		<![CDATA[  
+        select 	b.no
+				,b.title
+        		,b.content
+        		,b.hit
+        		,b.reg_date as regDate
+        		,u.name
+        		,b.user_no as userNo
+		from board b
+		join users u on b.user_no = u.no
+		where b.no = #{no}
+		]]>  
+    </select>  
+	
+	<!-- 조회수 증가 -->
+	 <update id="updateHit" parameterType="int">
+        <![CDATA[
+        update board
+        		set hit = hit + 1
+        		where no = #{no}
+        ]]>
+    </update>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertBoard" parameterType="com.javaex.vo.BoardVo">
+		<![CDATA[
+		insert into board (title, content, user_no)
+		value( 	 #{title}
+				,#{content}
+        		,#{userNo}
+			  )
+		]]>
+	</insert>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="delete" parameterType="com.javaex.vo.BoardVo">
+    	<![CDATA[
+    	delete from board
+   	 	where no = #{no}
+    	]]>
+	</delete>
+	
+	<!-- 게시글 수정-->
+	<update id="update" parameterType="com.javaex.vo.BoardVo">
+		<![CDATA[
+		update board set 
+				no = #{no}
+				,title = #{title} 
+				,content = #{content}
+        where no = #{no}
+		]]>
+	</update>
+	
+		
+	
+</mapper>
