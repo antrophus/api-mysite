@@ -50,7 +50,7 @@ jobs: # 작업을 정의
           script: |
             sudo docker stop mysite || true
             sudo docker rm mysite || true
-          sudo docker rmi mysite
+           sudo docker rmi mysite
 			sudo mkdir -p /home/ec2-user/upload
 			sudo docker pull hammoo/mysite:latest
 			sudo docker run -d \
