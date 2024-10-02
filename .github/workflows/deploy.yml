@@ -48,9 +48,9 @@ jobs: # 작업을 정의
           username: ${{ secrets.EC2_USERNAME }}			 #ec2서버의 계정명 (깃허브에 세팅된값)
           key: ${{ secrets.SSH_PRIVATE_KEY }}			 #web.pem 비번 (깃허브에 세팅된값)
           script: |
-           sudo docker stop mysite || true
+            sudo docker stop mysite || true
             sudo docker rm mysite || true
-			sudo docker rmi mysite
+          sudo docker rmi mysite
 			sudo mkdir -p /home/ec2-user/upload
 			sudo docker pull hammoo/mysite:latest
 			sudo docker run -d \
