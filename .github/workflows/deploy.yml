@@ -47,7 +47,7 @@ jobs: # 작업을 정의
           host: ${{ secrets.EC2_HOST }}					 #ec2서버의 ip (깃허브에 세팅된값)
           username: ${{ secrets.EC2_USERNAME }}			 #ec2서버의 계정명 (깃허브에 세팅된값)
           key: ${{ secrets.SSH_PRIVATE_KEY }}			 #web.pem 비번 (깃허브에 세팅된값)
-          script:
+          script: |
             sudo mkdir -p /home/ec2-user/upload		
 			sudo docker stop mysite || true	 
 			sudo docker rm mysite || true
